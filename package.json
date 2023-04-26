@@ -12,5 +12,8 @@
   "license": "ISC",
   "devDependencies": {
     "prettier": "^2.8.8"
+  },
+  "dependencies": {
+    "@discordjs/core": "^0.5.2"
   }
 }
