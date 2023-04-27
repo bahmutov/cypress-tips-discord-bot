@@ -3,6 +3,7 @@ import { REST } from '@discordjs/rest'
 import { API } from '@discordjs/core'
 import { getModifiedPostUrls } from 'scrape-blog-post-page'
 import { getPlaylistVideos } from 'scrape-youtube-videos'
+import { scrapeCourse } from './scrape-courses.mjs'
 import { DateTime } from 'luxon'
 
 if (!process.env.CYPRESS_TIPS_BOT_TOKEN) {
@@ -99,7 +100,7 @@ async function announceNewBlogPosts() {
       for (const newPost of newPosts) {
         await postMessage(
           `📝 New blog post "${newPost.title}" ${newPost.subtitle} 🔗 link ${newPost.url}`,
-          `posted "${newPost.title}"`,
+          `📯 posted "${newPost.title}"`,
         )
       }
     })
@@ -134,7 +135,32 @@ async function announceNewVideos() {
       for (const newPost of newPosts) {
         await postMessage(
           `📺 New video "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`,
-          `posted "${newPost.title}"`,
+          `📯 posted "${newPost.title}"`,
+        )
+      }
+    })
+}
+
+async function announceNewPluginsLessons(title) {
+  console.log('checking course "%s"', title)
+  await scrapeCourse(title)
+    .then((lessons) => {
+      console.log('found %d %s lessons', lessons.length, title)
+      return lessons
+    })
+    .then(async (recent) => {
+      const myMessages = await getMessages()
+      const newPosts = recent.filter((post) => {
+        const posted = myMessages.some((message) =>
+          message.content.includes(post.url),
+        )
+        return !posted
+      })
+      console.log('found %d lesson(s) to be messaged', newPosts.length)
+      for (const newPost of newPosts) {
+        await postMessage(
+          `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`,
+          `📯 posted "${newPost.title}"`,
         )
       }
     })
@@ -143,6 +169,10 @@ async function announceNewVideos() {
 async function announceNewContent() {
   await announceNewBlogPosts()
   await announceNewVideos()
+  await announceNewPluginsLessons('Cypress Plugins')
+  await announceNewPluginsLessons('Cypress vs Playwright')
+  await announceNewPluginsLessons('Testing The Swag Store')
+  await announceNewPluginsLessons('Cypress Network Testing Exercises')
 }
 
 announceNewContent()
