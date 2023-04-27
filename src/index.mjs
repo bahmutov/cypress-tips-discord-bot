@@ -2,6 +2,7 @@
 import { REST } from '@discordjs/rest'
 import { API } from '@discordjs/core'
 import { getModifiedPostUrls } from 'scrape-blog-post-page'
+import { getPlaylistVideos } from 'scrape-youtube-videos'
 import { DateTime } from 'luxon'
 
 if (!process.env.CYPRESS_TIPS_BOT_TOKEN) {
@@ -37,22 +38,22 @@ function postMessage(content, log = 'posted message') {
 function getMessages() {
   return api.channels.getMessages(channels.testing1).then(
     (allMessages) => {
-      console.log('got %d messages', allMessages.length)
+      console.log('got %d messages in the channel', allMessages.length)
       // console.log(allMessages)
 
       const myMessages = allMessages.filter(
         (m) => m.author.username === 'cypress.tips',
       )
       console.log('got %d cypress.tips messages', myMessages.length)
-      myMessages.forEach((m, k) => {
-        console.log(
-          '%d / %d %s %s',
-          k + 1,
-          myMessages.length,
-          m.timestamp,
-          m.content,
-        )
-      })
+      // myMessages.forEach((m, k) => {
+      //   console.log(
+      //     '%d / %d %s %s',
+      //     k + 1,
+      //     myMessages.length,
+      //     m.timestamp,
+      //     m.content,
+      //   )
+      // })
       return myMessages
     },
     (e) => {
@@ -62,42 +63,86 @@ function getMessages() {
 }
 // getMessages()
 
-function leavePostsAfter(date, posts) {
+function leavePostsAfter(date, posts, property = 'modified') {
   return posts.filter((post) => {
-    const modifiedDate = new Date(post.modified)
+    const modifiedDate = new Date(post[property])
     return modifiedDate > date
   })
 }
 
-getModifiedPostUrls()
-  .then((posts) => {
-    console.log('found %d Cypress blog posts', posts.length)
-    // only consider the blog posts from the last N days
-    const days = 2
-    const now = DateTime.now()
-    const ago = now.minus({ days })
-    const recent = leavePostsAfter(ago.toJSDate(), posts)
-    console.log(
-      'recent %d blog post(s) from the last %d days',
-      recent.length,
-      days,
-    )
-    console.log(recent)
-    return recent
-  })
-  .then(async (recent) => {
-    const myMessages = await getMessages()
-    const newPosts = recent.filter((post) => {
-      const posted = myMessages.some((message) =>
-        message.content.includes(post.url),
+async function announceNewBlogPosts() {
+  await getModifiedPostUrls()
+    .then((posts) => {
+      console.log('found %d Cypress blog posts', posts.length)
+      // only consider the blog posts from the last N days
+      const days = 2
+      const now = DateTime.now()
+      const ago = now.minus({ days })
+      const recent = leavePostsAfter(ago.toJSDate(), posts)
+      console.log(
+        'recent %d blog post(s) from the last %d days',
+        recent.length,
+        days,
       )
-      return !posted
+      console.log(recent)
+      return recent
     })
-    console.log('found %d blog post(s) to be messaged', newPosts.length)
-    for (const newPost of newPosts) {
-      await postMessage(
-        `📝 New blog post "${newPost.title}" ${newPost.subtitle} ${newPost.url}`,
-        `posted "${newPost.title}"`,
+    .then(async (recent) => {
+      const myMessages = await getMessages()
+      const newPosts = recent.filter((post) => {
+        const posted = myMessages.some((message) =>
+          message.content.includes(post.url),
+        )
+        return !posted
+      })
+      console.log('found %d blog post(s) to be messaged', newPosts.length)
+      for (const newPost of newPosts) {
+        await postMessage(
+          `📝 New blog post "${newPost.title}" ${newPost.subtitle} 🔗 link ${newPost.url}`,
+          `posted "${newPost.title}"`,
+        )
+      }
+    })
+}
+
+async function announceNewVideos() {
+  await getPlaylistVideos()
+    .then((videos) => {
+      console.log('found %d Cypress videos', videos.length)
+      // only consider the blog posts from the last N days
+      const days = 2
+      const now = DateTime.now()
+      const ago = now.minus({ days })
+      const recent = leavePostsAfter(ago.toJSDate(), videos, 'publishedAt')
+      console.log(
+        'recent %d video(s) from the last %d days',
+        recent.length,
+        days,
       )
-    }
-  })
+      console.log(recent)
+      return recent
+    })
+    .then(async (recent) => {
+      const myMessages = await getMessages()
+      const newPosts = recent.filter((post) => {
+        const posted = myMessages.some((message) =>
+          message.content.includes(post.url),
+        )
+        return !posted
+      })
+      console.log('found %d video(s) to be messaged', newPosts.length)
+      for (const newPost of newPosts) {
+        await postMessage(
+          `📺 New video "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`,
+          `posted "${newPost.title}"`,
+        )
+      }
+    })
+}
+
+async function announceNewContent() {
+  await announceNewBlogPosts()
+  await announceNewVideos()
+}
+
+announceNewContent()
