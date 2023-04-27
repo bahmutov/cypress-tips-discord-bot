@@ -11,10 +11,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/luxon": "^3.3.0",
     "prettier": "^2.8.8"
   },
   "dependencies": {
     "@discordjs/core": "^0.5.2",
-    "scrape-blog-post-page": "github:bahmutov/scrape-blog-post-page#v1"
+    "luxon": "^3.3.0",
+    "scrape-blog-post-page": "github:bahmutov/scrape-blog-post-page#v1.1.0"
   }
 }
