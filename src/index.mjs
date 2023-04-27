@@ -73,7 +73,7 @@ getModifiedPostUrls()
   .then((posts) => {
     console.log('found %d Cypress blog posts', posts.length)
     // only consider the blog posts from the last N days
-    const days = 10
+    const days = 15
     const now = DateTime.now()
     const ago = now.minus({ days })
     const recent = leavePostsAfter(ago.toJSDate(), posts)
@@ -96,7 +96,7 @@ getModifiedPostUrls()
     console.log('found %d blog post(s) to be messaged', newPosts.length)
     for (const newPost of newPosts) {
       await postMessage(
-        `New blog post "${newPost.title}" ${newPost.subtitle} ${newPost.url}`,
+        `📝 New blog post "${newPost.title}" ${newPost.subtitle} ${newPost.url}`,
         `posted "${newPost.title}"`,
       )
     }
