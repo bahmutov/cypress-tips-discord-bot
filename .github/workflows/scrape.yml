@@ -24,3 +24,4 @@ jobs:
         env:
           CYPRESS_TIPS_BOT_TOKEN: ${{ secrets.CYPRESS_TIPS_BOT_TOKEN }}
           BLOG_CHANNEL_ID: ${{ secrets.BLOG_CHANNEL_ID }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
