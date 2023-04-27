@@ -1,0 +1,26 @@
+name: Scrape
+on:
+  # you can manually trigger the workflow
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  schedule:
+    # scrape any new blog posts every couple of hours
+    - cron: '10 8,16,23 * * *'
+jobs:
+  scrape:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v3
+
+      # Install NPM dependencies
+      - name: Install dependencies 📦
+        uses: bahmutov/npm-install@v1
+
+      - name: Get modified posts 📰
+        run: node ./src/index.mjs
+        env:
+          CYPRESS_TIPS_BOT_TOKEN: ${{ secrets.CYPRESS_TIPS_BOT_TOKEN }}
+          BLOG_CHANNEL_ID: ${{ secrets.BLOG_CHANNEL_ID }}
