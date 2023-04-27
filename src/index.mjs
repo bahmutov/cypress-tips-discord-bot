@@ -1,6 +1,7 @@
 // https://discord.js.org/docs/packages/core/0.5.2
 import { REST } from '@discordjs/rest'
 import { API } from '@discordjs/core'
+import { getModifiedPostUrls } from 'scrape-blog-post-page'
 
 if (!process.env.CYPRESS_TIPS_BOT_TOKEN) {
   throw new Error('Missing CYPRESS_TIPS_BOT_TOKEN')
@@ -55,4 +56,6 @@ function getMessages() {
     },
   )
 }
-getMessages()
+// getMessages()
+
+getModifiedPostUrls('blog-post-urls.json')
