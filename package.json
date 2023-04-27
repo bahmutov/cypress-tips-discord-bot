@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@discordjs/core": "^0.5.2",
+    "debug": "^4.3.4",
+    "got": "11.8.3",
     "luxon": "^3.3.0",
     "scrape-blog-post-page": "github:bahmutov/scrape-blog-post-page#v1.1.0",
     "scrape-youtube-videos": "github:bahmutov/scrape-youtube-videos#v1.0.0"
