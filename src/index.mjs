@@ -73,7 +73,7 @@ getModifiedPostUrls()
   .then((posts) => {
     console.log('found %d Cypress blog posts', posts.length)
     // only consider the blog posts from the last N days
-    const days = 15
+    const days = 2
     const now = DateTime.now()
     const ago = now.minus({ days })
     const recent = leavePostsAfter(ago.toJSDate(), posts)
