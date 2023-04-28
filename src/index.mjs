@@ -158,19 +158,9 @@ async function announceNewVideos() {
       return recent
     })
     .then(async (recent) => {
-      const myMessages = await getMessages()
-      const newPosts = recent.filter((post) => {
-        const posted = myMessages.some((message) =>
-          message.content.includes(post.url),
-        )
-        return !posted
-      })
-      console.log('found %d video(s) to be messaged', newPosts.length)
-      for (const newPost of newPosts) {
-        const message = `📺 New video "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
-        const log = `📯 posted "${newPost.title}"`
-        success = success && (await postMessage(message, log))
-      }
+      const toMessage = (newPost) =>
+        `📺 New video "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
+      success = success && (await postMessages(recent, toMessage))
     })
 
   return success
@@ -186,19 +176,9 @@ async function announceNewPluginsLessons(title) {
       return lessons
     })
     .then(async (recent) => {
-      const myMessages = await getMessages()
-      const newPosts = recent.filter((post) => {
-        const posted = myMessages.some((message) =>
-          message.content.includes(post.url),
-        )
-        return !posted
-      })
-      console.log('found %d lesson(s) to be messaged', newPosts.length)
-      for (const newPost of newPosts) {
-        const message = `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
-        const log = `📯 posted "${newPost.title}"`
-        success = success && (await postMessage(message, log))
-      }
+      const toMessage = (newPost) =>
+        `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
+      success = success && (await postMessages(recent, toMessage))
     })
   return success
 }
