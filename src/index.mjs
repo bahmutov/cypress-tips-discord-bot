@@ -44,7 +44,11 @@ function postMessage(content, log = 'posted message') {
  * @param {Function} toMessage Converts an item to Discord message
  * @param {Function} toLog Converts an item to console log message
  */
-async function postMessages(items, toMessage, toLog) {
+async function postMessages(
+  items,
+  toMessage,
+  toLog = (post) => `📯 posted "${post.title}"`,
+) {
   if (!Array.isArray(items)) {
     throw new Error('Expected an array of items to post')
   }
@@ -127,19 +131,9 @@ async function announceNewBlogPosts() {
       return recent
     })
     .then(async (recent) => {
-      const myMessages = await getMessages()
-      const newPosts = recent.filter((post) => {
-        const posted = myMessages.some((message) =>
-          message.content.includes(post.url),
-        )
-        return !posted
-      })
-      console.log('found %d blog post(s) to be messaged', newPosts.length)
-      for (const newPost of newPosts) {
-        const message = `📝 New blog post "${newPost.title}" ${newPost.subtitle} 🔗 link ${newPost.url}`
-        const log = `📯 posted "${newPost.title}"`
-        success = success && (await postMessage(message, log))
-      }
+      const toMessage = (newPost) =>
+        `📝 New blog post "${newPost.title}" ${newPost.subtitle} 🔗 link ${newPost.url}`
+      success = success && (await postMessages(recent, toMessage))
     })
 
   return success
