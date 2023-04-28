@@ -196,7 +196,7 @@ async function announceNewContent() {
   for (const courseTitle of courseTitles) {
     success = success && (await announceNewPluginsLessons(courseTitle))
   }
-  console.log('posting %s', success ? '✅' : 'failed')
+  console.log('posting %s', success ? 'worked ✅' : 'failed 🚨')
   if (!success) {
     process.exit(1)
   }

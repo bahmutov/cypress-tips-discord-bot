@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies 📦
         uses: bahmutov/npm-install@v1
 
-      - name: Get modified posts 📰
+      - name: Posting new resources 📰
         run: node ./src/index.mjs
         env:
           CYPRESS_TIPS_BOT_TOKEN: ${{ secrets.CYPRESS_TIPS_BOT_TOKEN }}
