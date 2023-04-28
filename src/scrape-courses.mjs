@@ -16,6 +16,13 @@ const courseSlugs = {
 }
 const courseBaseUrl = 'https://cypress.tips/courses'
 
+export const courseTitles = [
+  'Cypress Plugins',
+  'Cypress vs Playwright',
+  'Testing The Swag Store',
+  'Cypress Network Testing Exercises',
+]
+
 export async function scrapeCourse(title) {
   debug('scraping course %s', title)
 
@@ -47,7 +54,5 @@ export async function scrapeCourse(title) {
     }
   })
 
-  // TODO: need modified timestamp
-  // for now limit ourselves to the last video
-  return lessons.slice(lessons.length - 1)
+  return lessons
 }

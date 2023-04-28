@@ -3,7 +3,7 @@ import { REST } from '@discordjs/rest'
 import { API } from '@discordjs/core'
 import { getModifiedPostUrls } from 'scrape-blog-post-page'
 import { getPlaylistVideos } from 'scrape-youtube-videos'
-import { scrapeCourse } from './scrape-courses.mjs'
+import { scrapeCourse, courseTitles } from './scrape-courses.mjs'
 import { DateTime } from 'luxon'
 
 if (!process.env.CYPRESS_TIPS_BOT_TOKEN) {
@@ -172,6 +172,11 @@ async function announceNewPluginsLessons(title) {
 
   await scrapeCourse(title)
     .then((lessons) => {
+      // TODO: need modified timestamp
+      // for now limit ourselves to the last video
+      return lessons.slice(lessons.length - 1)
+    })
+    .then((lessons) => {
       console.log('found %d %s lessons', lessons.length, title)
       return lessons
     })
@@ -188,13 +193,7 @@ async function announceNewContent() {
   success = success && (await announceNewBlogPosts())
   success = success && (await announceNewVideos())
 
-  const courses = [
-    'Cypress Plugins',
-    'Cypress vs Playwright',
-    'Testing The Swag Store',
-    'Cypress Network Testing Exercises',
-  ]
-  for (const courseTitle of courses) {
+  for (const courseTitle of courseTitles) {
     success = success && (await announceNewPluginsLessons(courseTitle))
   }
   console.log('posting %s', success ? '✅' : 'failed')

@@ -1,0 +1,22 @@
+name: Summary
+on:
+  # you can manually trigger the workflow
+  workflow_dispatch:
+  schedule:
+    # show summary daily
+    - cron: '10 10 * * *'
+jobs:
+  scrape:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v3
+
+      # Install NPM dependencies
+      - name: Install dependencies 📦
+        uses: bahmutov/npm-install@v1
+
+      - name: Get all my Cypress content summary 📰
+        run: node ./src/summary.mjs
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
