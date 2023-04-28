@@ -45,17 +45,10 @@ async function getSummary() {
         data: 'N',
         header: true,
       },
-      {
-        data: 'Link',
-        header: true,
-      },
     ]
     // all cells should be strings
     const rows = summary.map((item) => {
       const cells = [item.content, String(item.n)]
-      if (item.url) {
-        cells.push(`[link](${item.url})`)
-      }
       return cells
     })
     console.log(headers)
