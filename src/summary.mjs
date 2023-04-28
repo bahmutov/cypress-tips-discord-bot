@@ -7,20 +7,20 @@ async function getSummary() {
   const summary = []
   const blogPosts = await getBlogPostUrls()
   summary.push({
-    content: 'Cypress blog posts',
+    content: '📝 Cypress blog posts',
     n: blogPosts.length,
   })
 
   const videos = await getPlaylistVideos()
   summary.push({
-    content: 'Cypress.tips & Tricks videos',
+    content: '📺 Cypress.tips & Tricks videos',
     n: videos.length,
   })
 
   for (const courseTitle of courseTitles) {
     const lessons = await scrapeCourse(courseTitle)
     summary.push({
-      content: courseTitle,
+      content: `🎓 ${courseTitle}`,
       n: lessons.length,
     })
   }
@@ -40,8 +40,9 @@ async function getSummary() {
         header: true,
       },
     ]
+    // all cells should be strings
     const rows = summary.map((item) => {
-      return [item.content, item.n]
+      return [item.content, String(item.n)]
     })
     console.log(headers)
     console.log(rows)
