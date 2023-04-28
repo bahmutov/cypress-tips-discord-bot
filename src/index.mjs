@@ -38,6 +38,36 @@ function postMessage(content, log = 'posted message') {
   )
 }
 
+/**
+ * Posts the given items to the channel IF the url was not already posted
+ * @param {any[]} items
+ * @param {Function} toMessage Converts an item to Discord message
+ * @param {Function} toLog Converts an item to console log message
+ */
+async function postMessages(items, toMessage, toLog) {
+  if (!Array.isArray(items)) {
+    throw new Error('Expected an array of items to post')
+  }
+  let success = true
+
+  const myMessages = await getMessages()
+  const newPosts = items.filter((post) => {
+    const posted = myMessages.some((message) =>
+      message.content.includes(post.url),
+    )
+    return !posted
+  })
+
+  console.log('found %d post(s) to be messaged', newPosts.length)
+  for (const newPost of newPosts) {
+    const message = toMessage(newPost)
+    const log = toLog(newPost)
+    success = success && (await postMessage(message, log))
+  }
+
+  return success
+}
+
 function getMessages() {
   return api.channels.getMessages(channels.testing1).then(
     (allMessages) => {
