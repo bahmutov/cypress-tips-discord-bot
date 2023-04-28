@@ -30,24 +30,24 @@ async function getSummary() {
 
   if (process.env.GITHUB_ACTIONS) {
     // create summary on GitHub workflow
+    const rows = [
+      {
+        data: 'Content',
+        header: true,
+      },
+      {
+        data: 'N',
+        header: true,
+      },
+    ].concat(
+      summary.map((item) => {
+        return [item.content, item.n]
+      }),
+    )
+    console.log(rows)
     ghCore.summary
       .addHeading('My Cypress output')
-      .addTable([
-        [
-          {
-            data: 'Content',
-            header: true,
-          },
-          {
-            data: 'N',
-            header: true,
-          },
-        ].concat(
-          summary.map((item) => {
-            return [item.content, item.n]
-          }),
-        ),
-      ])
+      .addTable(rows)
       .addLink('cypress.tips/search', 'https://cypress.tips/search')
       .write()
   }
