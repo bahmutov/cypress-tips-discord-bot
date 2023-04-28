@@ -23,6 +23,18 @@ export const courseTitles = [
   'Cypress Network Testing Exercises',
 ]
 
+export function getCourseUrl(title) {
+  const courseSlug = courseSlugs[title]
+  if (!courseSlug) {
+    throw new Error(`Could not find course slug "${title}"`)
+  }
+  debug('course slug %s', courseSlug)
+  const courseUrl = courseBaseUrl + '/' + courseSlug
+  debug('course url %s', courseUrl)
+
+  return courseUrl
+}
+
 export async function scrapeCourse(title) {
   debug('scraping course %s', title)
 
@@ -32,12 +44,7 @@ export async function scrapeCourse(title) {
   }
   debug('course id %s', id)
 
-  const courseSlug = courseSlugs[title]
-  if (!courseSlug) {
-    throw new Error(`Could not find course slug "${title}"`)
-  }
-  debug('course slug %s', courseSlug)
-  const courseUrl = courseBaseUrl + '/' + courseSlug
+  const courseUrl = getCourseUrl(title)
   debug('course url %s', courseUrl)
 
   const url = `https://api.coursekit.dev/v1/courses/${id}`

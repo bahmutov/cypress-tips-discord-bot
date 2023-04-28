@@ -1,6 +1,9 @@
-import { getBlogPostUrls } from 'scrape-blog-post-page'
-import { getPlaylistVideos } from 'scrape-youtube-videos'
-import { scrapeCourse, courseTitles } from './scrape-courses.mjs'
+import { getBlogPostUrls, cypressBlogPostsUrl } from 'scrape-blog-post-page'
+import {
+  getPlaylistVideos,
+  cypressTipsPlaylistUrl,
+} from 'scrape-youtube-videos'
+import { scrapeCourse, courseTitles, getCourseUrl } from './scrape-courses.mjs'
 import ghCore from '@actions/core'
 
 async function getSummary() {
@@ -9,12 +12,14 @@ async function getSummary() {
   summary.push({
     content: '📝 Cypress blog posts',
     n: blogPosts.length,
+    url: cypressBlogPostsUrl,
   })
 
   const videos = await getPlaylistVideos()
   summary.push({
     content: '📺 Cypress.tips & Tricks videos',
     n: videos.length,
+    url: cypressTipsPlaylistUrl,
   })
 
   for (const courseTitle of courseTitles) {
@@ -22,6 +27,7 @@ async function getSummary() {
     summary.push({
       content: `🎓 ${courseTitle}`,
       n: lessons.length,
+      url: getCourseUrl(courseTitle),
     })
   }
 
@@ -39,10 +45,18 @@ async function getSummary() {
         data: 'N',
         header: true,
       },
+      {
+        data: 'Link',
+        header: true,
+      },
     ]
     // all cells should be strings
     const rows = summary.map((item) => {
-      return [item.content, String(item.n)]
+      const cells = [item.content, String(item.n)]
+      if (item.url) {
+        cells.push(`[link](${item.url})`)
+      }
+      return cells
     })
     console.log(headers)
     console.log(rows)
