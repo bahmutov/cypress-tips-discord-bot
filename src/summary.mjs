@@ -1,6 +1,7 @@
 import { getBlogPostUrls } from 'scrape-blog-post-page'
 import { getPlaylistVideos } from 'scrape-youtube-videos'
 import { scrapeCourse, courseTitles } from './scrape-courses.mjs'
+import ghCore from '@actions/core'
 
 async function getSummary() {
   const summary = []
@@ -26,6 +27,30 @@ async function getSummary() {
 
   // https://developer.mozilla.org/en-US/docs/Web/API/Console/table
   console.table(summary)
+
+  if (process.env.GITHUB_ACTIONS) {
+    // create summary on GitHub workflow
+    ghCore.summary
+      .addHeading('My Cypress output')
+      .addTable([
+        [
+          {
+            data: 'Content',
+            header: true,
+          },
+          {
+            data: 'N',
+            header: true,
+          },
+        ].concat(
+          summary.map((item) => {
+            return [item.content, item.n]
+          }),
+        ),
+      ])
+      .addLink('cypress.tips/search', 'https://cypress.tips/search')
+      .write()
+  }
 }
 
 getSummary()
