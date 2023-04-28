@@ -29,9 +29,11 @@ function postMessage(content, log = 'posted message') {
   return api.channels.createMessage(channels.testing1, { content }).then(
     () => {
       console.log(log)
+      return true
     },
     (e) => {
       console.error(e)
+      return false
     },
   )
 }
@@ -71,7 +73,13 @@ function leavePostsAfter(date, posts, property = 'modified') {
   })
 }
 
+/**
+ * Resolves with a boolean signalling the success
+ * (but not necessarily if any messages were posted)
+ */
 async function announceNewBlogPosts() {
+  let success = true
+
   await getModifiedPostUrls()
     .then((posts) => {
       console.log('found %d Cypress blog posts', posts.length)
@@ -98,15 +106,17 @@ async function announceNewBlogPosts() {
       })
       console.log('found %d blog post(s) to be messaged', newPosts.length)
       for (const newPost of newPosts) {
-        await postMessage(
-          `📝 New blog post "${newPost.title}" ${newPost.subtitle} 🔗 link ${newPost.url}`,
-          `📯 posted "${newPost.title}"`,
-        )
+        const message = `📝 New blog post "${newPost.title}" ${newPost.subtitle} 🔗 link ${newPost.url}`
+        const log = `📯 posted "${newPost.title}"`
+        success = success && (await postMessage(message, log))
       }
     })
+
+  return success
 }
 
 async function announceNewVideos() {
+  let success = true
   await getPlaylistVideos()
     .then((videos) => {
       console.log('found %d Cypress videos', videos.length)
@@ -133,16 +143,19 @@ async function announceNewVideos() {
       })
       console.log('found %d video(s) to be messaged', newPosts.length)
       for (const newPost of newPosts) {
-        await postMessage(
-          `📺 New video "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`,
-          `📯 posted "${newPost.title}"`,
-        )
+        const message = `📺 New video "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
+        const log = `📯 posted "${newPost.title}"`
+        success = success && (await postMessage(message, log))
       }
     })
+
+  return success
 }
 
 async function announceNewPluginsLessons(title) {
   console.log('checking course "%s"', title)
+  let success = true
+
   await scrapeCourse(title)
     .then((lessons) => {
       console.log('found %d %s lessons', lessons.length, title)
@@ -158,21 +171,32 @@ async function announceNewPluginsLessons(title) {
       })
       console.log('found %d lesson(s) to be messaged', newPosts.length)
       for (const newPost of newPosts) {
-        await postMessage(
-          `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`,
-          `📯 posted "${newPost.title}"`,
-        )
+        const message = `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
+        const log = `📯 posted "${newPost.title}"`
+        success = success && (await postMessage(message, log))
       }
     })
+  return success
 }
 
 async function announceNewContent() {
-  await announceNewBlogPosts()
-  await announceNewVideos()
-  await announceNewPluginsLessons('Cypress Plugins')
-  await announceNewPluginsLessons('Cypress vs Playwright')
-  await announceNewPluginsLessons('Testing The Swag Store')
-  await announceNewPluginsLessons('Cypress Network Testing Exercises')
+  let success = true
+  success = success && (await announceNewBlogPosts())
+  success = success && (await announceNewVideos())
+
+  const courses = [
+    'Cypress Plugins',
+    'Cypress vs Playwright',
+    'Testing The Swag Store',
+    'Cypress Network Testing Exercises',
+  ]
+  for (const courseTitle of courses) {
+    success = success && (await announceNewPluginsLessons(courseTitle))
+  }
+  console.log('posting %s', success ? '✅' : 'failed')
+  if (!success) {
+    process.exit(1)
+  }
 }
 
 announceNewContent()
