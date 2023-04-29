@@ -17,7 +17,7 @@ async function getSummary() {
 
   const videos = await getPlaylistVideos()
   summary.push({
-    content: '📺 Cypress.tips & Tricks videos',
+    content: '📺 Cypress Tips & Tricks videos',
     n: videos.length,
     url: cypressTipsPlaylistUrl,
   })
