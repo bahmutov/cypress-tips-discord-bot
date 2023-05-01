@@ -49,7 +49,10 @@ async function postMessages(
   items,
   toMessage,
   toLog = (post) => `📯 posted "${post.title}"`,
+  options = {},
 ) {
+  const dry = Boolean(options.dry)
+
   if (!Array.isArray(items)) {
     throw new Error('Expected an array of items to post')
   }
@@ -67,7 +70,12 @@ async function postMessages(
   for (const newPost of newPosts) {
     const message = toMessage(newPost)
     const log = toLog(newPost)
-    success = success && (await postMessage(message, log))
+    if (dry) {
+      console.log('dry mode: would be posting the following message')
+      console.log(message)
+    } else {
+      success = success && (await postMessage(message, log))
+    }
   }
 
   return success
@@ -112,7 +120,7 @@ function leavePostsAfter(date, posts, property = 'modified') {
  * Resolves with a boolean signalling the success
  * (but not necessarily if any messages were posted)
  */
-async function announceNewBlogPosts() {
+async function announceNewBlogPosts(options) {
   let success = true
 
   await getModifiedPostUrls()
@@ -134,13 +142,14 @@ async function announceNewBlogPosts() {
     .then(async (recent) => {
       const toMessage = (newPost) =>
         `📝 New blog post "${newPost.title}" ${newPost.subtitle} 🔗 link ${newPost.url}`
-      success = success && (await postMessages(recent, toMessage))
+      success =
+        success && (await postMessages(recent, toMessage, undefined, options))
     })
 
   return success
 }
 
-export async function announceNewVideos() {
+export async function announceNewVideos(options) {
   let success = true
   await getPlaylistVideos()
     .then((videos) => {
@@ -161,19 +170,20 @@ export async function announceNewVideos() {
     .then(async (recent) => {
       const toMessage = (newPost) =>
         `📺 New video "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
-      success = success && (await postMessages(recent, toMessage))
+      success =
+        success && (await postMessages(recent, toMessage, undefined, options))
     })
 
   return success
 }
 
-async function announceNewExamples() {
+async function announceNewExamples(options) {
   let success = true
   await scrapeExamples()
     .then((examples) => {
       console.log('found %d Cypress examples', examples.length)
       // only consider the blog posts from the last N days
-      const days = 5
+      const days = 10
       const now = DateTime.now()
       const ago = now.minus({ days })
       const recent = leavePostsAfter(ago.toJSDate(), examples, 'created')
@@ -195,13 +205,14 @@ async function announceNewExamples() {
     .then(async (recent) => {
       const toMessage = (newPost) =>
         `📚 New Cypress example "${newPost.title}" 🔗 link ${newPost.url}`
-      success = success && (await postMessages(recent, toMessage))
+      success =
+        success && (await postMessages(recent, toMessage, undefined, options))
     })
 
   return success
 }
 
-async function announceNewPluginsLessons(title) {
+async function announceNewPluginsLessons(title, options) {
   console.log('checking course "%s"', title)
   let success = true
 
@@ -218,19 +229,24 @@ async function announceNewPluginsLessons(title) {
     .then(async (recent) => {
       const toMessage = (newPost) =>
         `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
-      success = success && (await postMessages(recent, toMessage))
+      success =
+        success && (await postMessages(recent, toMessage, undefined, options))
     })
   return success
 }
 
-export async function announceNewContent() {
+export async function announceNewContent(options = {}) {
+  const dry = Boolean(options.dry)
+  const postOptions = { dry }
+
   let success = true
-  success = success && (await announceNewBlogPosts())
-  success = success && (await announceNewVideos())
-  success = success && (await announceNewExamples())
+  success = success && (await announceNewBlogPosts(postOptions))
+  success = success && (await announceNewVideos(postOptions))
+  success = success && (await announceNewExamples(postOptions))
 
   for (const courseTitle of courseTitles) {
-    success = success && (await announceNewPluginsLessons(courseTitle))
+    success =
+      success && (await announceNewPluginsLessons(courseTitle, postOptions))
   }
 
   return success
