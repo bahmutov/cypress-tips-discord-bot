@@ -64,7 +64,7 @@ async function getSummary() {
     ghCore.summary
       .addHeading('My Cypress output')
       .addTable([headers, ...rows])
-      .addLink('cypress.tips/search', 'https://cypress.tips/search')
+      .addLink('cypress.tips', 'https://cypress.tips')
       .write()
   }
 }

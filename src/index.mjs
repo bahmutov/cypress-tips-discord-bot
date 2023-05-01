@@ -5,6 +5,7 @@ import { getModifiedPostUrls } from 'scrape-blog-post-page'
 import { getPlaylistVideos } from 'scrape-youtube-videos'
 import { scrapeCourse, courseTitles } from './scrape-courses.mjs'
 import { DateTime } from 'luxon'
+import { scrapeExamples, examplesUrl } from './scrape-examples.mjs'
 
 if (!process.env.CYPRESS_TIPS_BOT_TOKEN) {
   throw new Error('Missing CYPRESS_TIPS_BOT_TOKEN')
@@ -166,6 +167,40 @@ async function announceNewVideos() {
   return success
 }
 
+async function announceNewExamples() {
+  let success = true
+  await scrapeExamples()
+    .then((examples) => {
+      console.log('found %d Cypress examples', examples.length)
+      // only consider the blog posts from the last N days
+      const days = 5
+      const now = DateTime.now()
+      const ago = now.minus({ days })
+      const recent = leavePostsAfter(ago.toJSDate(), examples, 'created')
+      console.log(
+        'recent %d example(s) from the last %d days',
+        recent.length,
+        days,
+      )
+      console.log(recent)
+      return recent
+    })
+    .then((posts) => {
+      // limit ourselves to one recently added example post only
+      if (posts.length) {
+        return posts.slice(0, 1)
+      }
+      return posts
+    })
+    .then(async (recent) => {
+      const toMessage = (newPost) =>
+        `📚 New Cypress example "${newPost.title}" 🔗 link ${newPost.url}`
+      success = success && (await postMessages(recent, toMessage))
+    })
+
+  return success
+}
+
 async function announceNewPluginsLessons(title) {
   console.log('checking course "%s"', title)
   let success = true
@@ -192,6 +227,7 @@ async function announceNewContent() {
   let success = true
   success = success && (await announceNewBlogPosts())
   success = success && (await announceNewVideos())
+  success = success && (await announceNewExamples())
 
   for (const courseTitle of courseTitles) {
     success = success && (await announceNewPluginsLessons(courseTitle))
