@@ -140,7 +140,7 @@ async function announceNewBlogPosts() {
   return success
 }
 
-async function announceNewVideos() {
+export async function announceNewVideos() {
   let success = true
   await getPlaylistVideos()
     .then((videos) => {
@@ -223,7 +223,7 @@ async function announceNewPluginsLessons(title) {
   return success
 }
 
-async function announceNewContent() {
+export async function announceNewContent() {
   let success = true
   success = success && (await announceNewBlogPosts())
   success = success && (await announceNewVideos())
@@ -232,10 +232,6 @@ async function announceNewContent() {
   for (const courseTitle of courseTitles) {
     success = success && (await announceNewPluginsLessons(courseTitle))
   }
-  console.log('posting %s', success ? 'worked ✅' : 'failed 🚨')
-  if (!success) {
-    process.exit(1)
-  }
-}
 
-announceNewContent()
+  return success
+}

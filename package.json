@@ -1,14 +1,14 @@
 {
   "name": "cypress-tips-discord-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Post my new Cypress resources to Discord channel",
   "private": true,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@types/luxon": "^3.3.0",
@@ -17,6 +17,7 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@discordjs/core": "^0.5.2",
+    "arg": "^5.0.2",
     "debug": "^4.3.4",
     "got": "11.8.3",
     "luxon": "^3.3.0",
