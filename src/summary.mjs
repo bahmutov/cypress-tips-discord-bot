@@ -4,6 +4,7 @@ import {
   cypressTipsPlaylistUrl,
 } from 'scrape-youtube-videos'
 import { scrapeCourse, courseTitles, getCourseUrl } from './scrape-courses.mjs'
+import { scrapeExamples, examplesUrl } from './scrape-examples.mjs'
 import ghCore from '@actions/core'
 
 async function getSummary() {
@@ -20,6 +21,13 @@ async function getSummary() {
     content: '📺 Cypress Tips & Tricks videos',
     n: videos.length,
     url: cypressTipsPlaylistUrl,
+  })
+
+  const examples = await scrapeExamples()
+  summary.push({
+    content: '📚 Cypress Examples',
+    n: examples.length,
+    url: examplesUrl,
   })
 
   for (const courseTitle of courseTitles) {

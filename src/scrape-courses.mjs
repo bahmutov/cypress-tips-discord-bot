@@ -2,6 +2,7 @@ import Debug from 'debug'
 import got from 'got'
 
 const debug = Debug('cypress-tips-discord-bot')
+
 const courseIds = {
   'Cypress Plugins': 'coztjw6spx',
   'Cypress vs Playwright': 'co7afj5vav',
