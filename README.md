@@ -5,6 +5,12 @@
 - [x] post each blog post link to my Discord server channel `testing1`
 - [ ] post each blog post link to my Discord server channel `blog-feed`
 
+## Post new content
+
+### Dry mode
+
+You can prepare the messages but not post them using `--dry` mode
+
 ## Debugging
 
 Run with `DEBUG=cypress-tips-discord-bot` environment variable

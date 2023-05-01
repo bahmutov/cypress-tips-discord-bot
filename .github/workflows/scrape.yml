@@ -20,7 +20,7 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: Posting new resources 📰
-        run: node ./src/index.mjs
+        run: node ./bin/post-new-content.mjs
         env:
           CYPRESS_TIPS_BOT_TOKEN: ${{ secrets.CYPRESS_TIPS_BOT_TOKEN }}
           BLOG_CHANNEL_ID: ${{ secrets.BLOG_CHANNEL_ID }}
