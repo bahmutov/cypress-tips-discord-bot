@@ -74,6 +74,10 @@ async function postMessages(
       console.log('dry mode: would be posting the following message')
       console.log(message)
     } else {
+      console.log('posting the following message')
+      console.log(message)
+      console.log('log message')
+      console.log(log)
       success = success && (await postMessage(message, log))
     }
   }
@@ -224,11 +228,17 @@ async function announceNewPluginsLessons(title, options) {
     })
     .then((lessons) => {
       console.log('found %d %s lessons', lessons.length, title)
+      if (lessons.length > 0 && lessons.length < 3) {
+        console.log(lessons)
+      }
       return lessons
     })
     .then(async (recent) => {
-      const toMessage = (newPost) =>
-        `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
+      const toMessage = (newPost) => {
+        const message = `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
+        console.log(message)
+        return message
+      }
       success =
         success && (await postMessages(recent, toMessage, undefined, options))
     })
