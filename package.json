@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Post my new Cypress resources to Discord channel",
   "private": true,
-  "main": "index.js",
+  "main": "index.mjs",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

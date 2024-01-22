@@ -11,6 +11,16 @@
 
 You can prepare the messages but not post them using `--dry` mode
 
+### Scrape one type only
+
+You can scrape just a single type of content
+
+```
+node ./bin/post-new-content.mjs --type example
+```
+
+Allowed values: `post`, `video`, `example`, and `course`
+
 ## Debugging
 
 Run with `DEBUG=cypress-tips-discord-bot` environment variable

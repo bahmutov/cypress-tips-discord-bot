@@ -247,16 +247,34 @@ async function announceNewPluginsLessons(title, options) {
 
 export async function announceNewContent(options = {}) {
   const dry = Boolean(options.dry)
+  const type = options.type
   const postOptions = { dry }
 
   let success = true
-  success = success && (await announceNewBlogPosts(postOptions))
-  success = success && (await announceNewVideos(postOptions))
-  success = success && (await announceNewExamples(postOptions))
 
-  for (const courseTitle of courseTitles) {
-    success =
-      success && (await announceNewPluginsLessons(courseTitle, postOptions))
+  if (type) {
+    if (type === 'post') {
+      success = success && (await announceNewBlogPosts(postOptions))
+    } else if (type === 'video') {
+      success = success && (await announceNewVideos(postOptions))
+    } else if (type === 'example') {
+      success = success && (await announceNewExamples(postOptions))
+    } else if (type === 'course') {
+      for (const courseTitle of courseTitles) {
+        success =
+          success && (await announceNewPluginsLessons(courseTitle, postOptions))
+      }
+    } else {
+      throw new Error(`Unknown type "${type}"`)
+    }
+  } else {
+    success = success && (await announceNewBlogPosts(postOptions))
+    success = success && (await announceNewVideos(postOptions))
+    success = success && (await announceNewExamples(postOptions))
+    for (const courseTitle of courseTitles) {
+      success =
+        success && (await announceNewPluginsLessons(courseTitle, postOptions))
+    }
   }
 
   return success
