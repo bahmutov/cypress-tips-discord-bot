@@ -173,7 +173,7 @@ export async function announceNewVideos(options) {
     })
     .then(async (recent) => {
       const toMessage = (newPost) =>
-        `📺 New video "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
+        `📺 New video "${newPost.title}" ${newPost.description || ''} 🔗 link ${newPost.url}`
       success =
         success && (await postMessages(recent, toMessage, undefined, options))
     })
@@ -235,7 +235,7 @@ async function announceNewPluginsLessons(title, options) {
     })
     .then(async (recent) => {
       const toMessage = (newPost) => {
-        const message = `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description} 🔗 link ${newPost.url}`
+        const message = `🎓 Course "${title}" has a new lesson out: "${newPost.title}" ${newPost.description || ''} 🔗 link ${newPost.url}`
         console.log(message)
         return message
       }
