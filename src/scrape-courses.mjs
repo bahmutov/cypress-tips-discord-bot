@@ -1,28 +1,49 @@
+// @ts-check
 import Debug from 'debug'
 import got from 'got'
 
 const debug = Debug('cypress-tips-discord-bot')
 
-const courseIds = {
-  'Cypress Plugins': 'coztjw6spx',
-  'Cypress vs Playwright': 'co7afj5vav',
-  'Testing The Swag Store': 'coj0pt0v7t',
-  'Cypress Network Testing Exercises': 'covt2fpsux',
-}
-const courseSlugs = {
-  'Cypress Plugins': 'cypress-plugins',
-  'Cypress vs Playwright': 'cypress-vs-playwright',
-  'Testing The Swag Store': 'swag-store',
-  'Cypress Network Testing Exercises': 'network-testing',
-}
 const courseBaseUrl = 'https://cypress.tips/courses'
 
-export const courseTitles = [
-  'Cypress Plugins',
-  'Cypress vs Playwright',
-  'Testing The Swag Store',
-  'Cypress Network Testing Exercises',
+/** @typedef {object} CourseDefinition */
+/** @property {string} title */
+/** @property {string} slug */
+/** @property {string} id */
+
+/** @type {CourseDefinition[]} */
+const listOfCourses = [
+  {
+    title: 'Testing The Swag Store',
+    slug: 'swag-store',
+    id: 'coj0pt0v7t',
+  },
+  {
+    title: 'Cypress Plugins',
+    slug: 'cypress-plugins',
+    id: 'coztjw6spx',
+  },
+  {
+    title: 'Cypress vs Playwright',
+    slug: 'cypress-vs-playwright',
+    id: 'co7afj5vav',
+  },
+  {
+    title: 'Cypress Network Testing Exercises',
+    slug: 'network-testing',
+    id: 'covt2fpsux',
+  },
 ]
+
+const courseIds = {}
+const courseSlugs = {}
+
+listOfCourses.forEach((course) => {
+  courseIds[course.title] = course.id
+  courseSlugs[course.title] = course.slug
+})
+
+export const courseTitles = listOfCourses.map((c) => c.title)
 
 export function getCourseUrl(title) {
   const courseSlug = courseSlugs[title]
