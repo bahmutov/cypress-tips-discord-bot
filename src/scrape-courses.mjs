@@ -6,10 +6,12 @@ const debug = Debug('cypress-tips-discord-bot')
 
 const courseBaseUrl = 'https://cypress.tips/courses'
 
-/** @typedef {object} CourseDefinition */
-/** @property {string} title */
-/** @property {string} slug */
-/** @property {string} id */
+/**
+ * @typedef {Object} CourseDefinition
+ * @property {string} title - The title of the course.
+ * @property {string} slug - The slug of the course.
+ * @property {string} id - The unique identifier of the course.
+ */
 
 /** @type {CourseDefinition[]} */
 const listOfCourses = [
@@ -19,19 +21,39 @@ const listOfCourses = [
     id: 'coj0pt0v7t',
   },
   {
-    title: 'Cypress Plugins',
-    slug: 'cypress-plugins',
-    id: 'coztjw6spx',
-  },
-  {
     title: 'Cypress vs Playwright',
     slug: 'cypress-vs-playwright',
     id: 'co7afj5vav',
   },
   {
+    title: 'Cypress-split Plugin',
+    slug: 'cypress-split',
+    id: 'cov1ad6pdh',
+  },
+  {
+    title: 'TDD Calculator',
+    id: 'con6p7gvh5',
+    slug: 'tdd-calculator',
+  },
+  {
+    title: 'Cypress Plugins',
+    slug: 'cypress-plugins',
+    id: 'coztjw6spx',
+  },
+  {
     title: 'Cypress Network Testing Exercises',
     slug: 'network-testing',
     id: 'covt2fpsux',
+  },
+  {
+    id: 'cov8byve72',
+    slug: 'visual-testing',
+    title: 'Visual Testing With Cypress',
+  },
+  {
+    id: 'co7fdsq21w',
+    slug: 'cy-copilot',
+    title: 'Write Cypress Tests Using GitHub Copilot',
   },
 ]
 
