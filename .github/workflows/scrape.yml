@@ -10,7 +10,7 @@ on:
     - cron: '10 1,5,11,16,20 * * *'
 jobs:
   scrape:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v4
